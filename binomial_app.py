@@ -19,8 +19,6 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from scipy.stats import binom
 
-st.set_page_config(page_title="Binomial Distribution Explorer", layout="centered")
-
 st.title("Binomial Distribution Explorer")
 st.write(
     "Set the number of trials **n** and success probability **p**, "
@@ -32,21 +30,22 @@ col1, col2 = st.columns(2)
 with col1:
     n = st.slider("Number of trials (n)", min_value=1, max_value=200, value=20)
 with col2:
-    p = st.slider("Probability of success (p)", min_value=0.0, max_value=1.0, value=0.5, step=0.01)
+    p = st.slider("Probability of success (p)", min_value=0.0, max_value=1.0, 
+                  value=0.5, step=0.01)
 
 mean = n * p
 std = (n * p * (1 - p)) ** 0.5
-st.caption(f"Mean = n·p = {mean:.2f}    Std dev = √(n·p·(1-p)) = {std:.2f}")
+st.caption(f"Mean (n·p) = {mean:.2f}    and      Std dev(√(n·p·(1-p))) = {std:.2f}")
 
 st.divider()
 
 # ── Probability query type ───────────────────────────────────────
-st.subheader("Probability calculator")
+st.header("Probability calculator")
 
 query_type = st.radio(
     "What do you want to find?",
     ["Exact: P(X = k)", "Below: P(X ≤ k)", "Above: P(X ≥ k)", "Between: P(a ≤ X ≤ b)"],
-    horizontal=False,
+    horizontal=True,
 )
 
 result = None
@@ -99,7 +98,7 @@ ax.bar(k_vals, pmf_vals, color=colors, edgecolor="white", linewidth=0.3)
 ax.axvline(mean, color="#f7a24f", linestyle="--", linewidth=1, label=f"mean = {mean:.1f}")
 ax.set_xlabel("k (number of successes)")
 ax.set_ylabel("P(X = k)")
-ax.set_title(f"Binomial(n={n}, p={p})  —  shaded region = {result:.4f}")
+ax.set_title(f"Binomial(n={n}, p={p})  with shaded region = {result:.2%}")
 ax.legend()
 fig.tight_layout()
 
