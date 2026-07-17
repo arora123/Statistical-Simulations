@@ -4,7 +4,7 @@ Poisson Distribution Explorer
 A minimal Streamlit app: pick lambda (average rate), pick k (or a range),
 see the probability and the distribution plot with the relevant region shaded.
 
-Tech stack (same as the binomial app):
+Tech stack:
     streamlit  -> UI
     scipy      -> poisson math (pmf/cdf)
     matplotlib -> plotting
