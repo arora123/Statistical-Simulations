@@ -4,7 +4,7 @@ Binomial Distribution Explorer
 A minimal Streamlit app: pick n and p, pick k (or a range), see the
 probability and the distribution plot with the relevant region shaded.
 
-Tech stack (deliberately small):
+Tech stack:
     streamlit  -> UI
     scipy      -> binomial math (pmf/cdf)
     matplotlib -> plotting
