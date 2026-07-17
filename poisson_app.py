@@ -23,7 +23,7 @@ st.set_page_config(page_title="Poisson Distribution Explorer", layout="centered"
 
 st.title("Poisson Distribution Explorer")
 st.write(
-    "Set the average rate **λ (lambda)** — the expected number of events per interval — "
+    "Set the average rate **λ (lambda)**, the expected number of events per interval — "
     "then choose what probability you want to compute."
 )
 
@@ -32,7 +32,7 @@ lam = st.slider("Average rate (λ)", min_value=0.1, max_value=50.0, value=5.0, s
 
 mean = lam
 std = lam ** 0.5
-st.caption(f"Mean = λ = {mean:.2f}    Std dev = √λ = {std:.2f}")
+st.caption(f"Mean (λ) = {mean:.2f}    and      Std dev(√λ) = {std:.2f}")
 
 # Reasonable upper bound for k-inputs and the plot, based on lambda
 k_max = int(lam + 4 * std) + 5
@@ -45,7 +45,7 @@ st.subheader("Probability calculator")
 query_type = st.radio(
     "What do you want to find?",
     ["Exact: P(X = k)", "Below: P(X ≤ k)", "Above: P(X ≥ k)", "Between: P(a ≤ X ≤ b)"],
-    horizontal=False,
+    horizontal=True,
 )
 
 result = None
@@ -102,7 +102,7 @@ ax.bar(k_vals, pmf_vals, color=colors, edgecolor="white", linewidth=0.3)
 ax.axvline(mean, color="#f7a24f", linestyle="--", linewidth=1, label=f"mean = {mean:.1f}")
 ax.set_xlabel("k (number of events)")
 ax.set_ylabel("P(X = k)")
-ax.set_title(f"Poisson(λ={lam})  —  shaded region = {result:.4f}")
+ax.set_title(f"Poisson(λ={lam})  with  shaded region = {result:.2%}")
 ax.legend()
 fig.tight_layout()
 
@@ -111,6 +111,6 @@ st.pyplot(fig)
 st.caption(
     "Blue bars mark the outcomes included in the probability you selected above; "
     "the dashed line marks the distribution's mean. "
-    "Note: unlike the Binomial, Poisson has no upper limit on k — the plot is truncated "
+    "Note: unlike the Binomial, Poisson has no upper limit on k, the plot is truncated "
     "at a reasonable range based on λ."
 )
