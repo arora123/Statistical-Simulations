@@ -1,0 +1,25 @@
+name: Keep Streamlit Apps Awake
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # runs every 6 hours
+  workflow_dispatch:          # lets you trigger it manually too, for testing
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Binomial App
+        run: curl -s https://enjoy-stats-binomial-distribution.streamlit.app/ -o /dev/null
+
+      - name: Ping Poisson App
+        run: curl -s https://your-poisson-link.streamlit.app/ -o /dev/null
+        
+      - name: Ping Discrete Uniform App
+        run: curl -s https://enjoy-stats-discrete-uniform-app.streamlit.app/ -o /dev/null
+
+      - name: Ping Continuous Uniform App
+        run: curl -s https://enjoy-stats-continuous-uniform-app.streamlit.app/ -o /dev/null
+
+      - name: Ping Normal App
+        run: curl -s https://enjoy-stats-normal-distribution.streamlit.app/ -o /dev/null
