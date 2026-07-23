@@ -28,7 +28,7 @@ jobs:
               "https://enjoy-stats-binomial-distribution.streamlit.app/",
               "https://enjoy-stats-poison-distribution.streamlit.app/",
               "https://enjoy-stats-discrete-uniform-app.streamlit.app/",
-              "https://enjoy-stats-continuous-uniform-app.streamlit.app//"
+              "https://enjoy-stats-continuous-uniform-app.streamlit.app/",
               "https://enjoy-stats-normal-distribution.streamlit.app/",
           ]
 
