@@ -2,24 +2,51 @@ name: Keep Streamlit Apps Awake
 
 on:
   schedule:
-    - cron: "0 */6 * * *"   # runs every 6 hours
-  workflow_dispatch:          # lets you trigger it manually too, for testing
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
 
 jobs:
-  ping:
+  wake-apps:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Binomial App
-        run: curl -s https://enjoy-stats-binomial-distribution.streamlit.app/ -o /dev/null
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-      - name: Ping Poisson App
-        run: curl -s https://your-poisson-link.streamlit.app/ -o /dev/null
-        
-      - name: Ping Discrete Uniform App
-        run: curl -s https://enjoy-stats-discrete-uniform-app.streamlit.app/ -o /dev/null
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
 
-      - name: Ping Continuous Uniform App
-        run: curl -s https://enjoy-stats-continuous-uniform-app.streamlit.app/ -o /dev/null
+      - name: Visit apps like a real browser
+        run: |
+          python - <<'EOF'
+          from playwright.sync_api import sync_playwright
 
-      - name: Ping Normal App
-        run: curl -s https://enjoy-stats-normal-distribution.streamlit.app/ -o /dev/null
+          urls = [
+              "https://enjoy-stats-binomial-distribution.streamlit.app/",
+              "https://enjoy-stats-poisson-link.streamlit.app/",
+              "https://enjoy-stats-discrete-uniform-app.streamlit.app",
+              "https://enjoy-stats-continuous-uniform-link.streamlit.app/",
+              "https://enjoy-stats-normal-link.streamlit.app/",
+          ]
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              for url in urls:
+                  page = browser.new_page()
+                  print(f"Visiting {url}")
+                  page.goto(url, timeout=60000)
+                  page.wait_for_timeout(8000)  # stay on the page 8 seconds
+                  # If the "Zzzz" wake-up screen appears, click the wake button
+                  try:
+                      wake_button = page.get_by_text("Yes, get this app back up!", exact=False)
+                      if wake_button.is_visible(timeout=3000):
+                          wake_button.click()
+                          page.wait_for_timeout(15000)  # give it time to spin up
+                  except Exception:
+                      pass
+                  page.close()
+              browser.close()
+          EOF
