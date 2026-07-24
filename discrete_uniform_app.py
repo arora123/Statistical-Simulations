@@ -129,4 +129,4 @@ st.caption(
     "Found an issue, or interested in corporate training / speaking? "
     "Reach out at [LinkedIn](https://www.linkedin.com/in/drnishaarora/) or [Email](mailto:dr.aroranisha@gmail.com?subject=Hello%20Nisha&body=I%20saw%20your%20Streamlit%20app...)"
 )."
-)
+
