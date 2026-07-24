@@ -121,3 +121,11 @@ st.caption(
     "the dashed line marks the distribution's mean. Every bar has the same height, "
     "that's the defining feature of a uniform distribution."
 )
+
+st.divider()
+
+st.caption(
+    "Built by Dr. Nisha Arora, Analytics, Data Science & AI trainer. "
+    "Found an issue, or interested in corporate training / speaking? "
+    "Reach out at [LinkedIn](https://www.linkedin.com/in/drnishaarora/) or [Email](dr.aroranisha@gmail.com)."
+)
