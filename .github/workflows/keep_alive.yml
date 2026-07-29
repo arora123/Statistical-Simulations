@@ -30,6 +30,7 @@ jobs:
               "https://enjoy-stats-discrete-uniform-app.streamlit.app/",
               "https://enjoy-stats-continuous-uniform-app.streamlit.app/",
               "https://enjoy-stats-normal-distribution.streamlit.app/",
+              "https://enjoy-stats-covariance-correlation-scatterplot.streamlit.app/"
           ]
 
           with sync_playwright() as p:
