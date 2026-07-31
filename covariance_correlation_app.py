@@ -25,10 +25,10 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from scipy.stats import pearsonr
 
-st.set_page_config(page_title="Covariance & Correlation Explorer", layout="centered")
+st.set_page_config(page_title="Correlation Explorer: Scatter Plot, Covariance & Pearson Correlation", layout="centered")
 
 st.markdown(
-    "<h1 style='text-align: center;'>Covariance & Correlation Explorer</h1>",
+    "<h1 style='text-align: center;'>Correlation Explorer: Scatter Plot, Covariance & Pearson Correlation</h1>",
     unsafe_allow_html=True,
 )
 st.write(
