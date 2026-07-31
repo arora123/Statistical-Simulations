@@ -29,7 +29,7 @@ from scipy.stats import uniform
 st.set_page_config(page_title="New Continuous Uniform Distribution Explorer", layout="centered")
 
 st.markdown(
-    "<h1 style='font-size: 34px;'>Discrete Uniform Distribution Explorer</h1>",
+    "<h1 style='font-size: 34px;'>Continuous Uniform Distribution Explorer</h1>",
     unsafe_allow_html=True
 )
 
