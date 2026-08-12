@@ -174,7 +174,7 @@ if x_vals is not None and y_vals is not None and len(x_vals) == len(y_vals) and 
         metric_col2.metric("Correlation (r)", f"{corr_r:.3f}")
         metric_col2.metric("R² (r squared)", f"{r_squared:.3f}")
 
-        result_col.caption(f"p-value (H₀: ρ = 0) (= {p_value:.4f}) tests whether the correlation is significantly different from 0")
+        result_col.caption(f"p-value (H₀: r = 0) (= {p_value:.4f}) tests whether the correlation is significantly different from 0")
 
         result_col.latex(r"\text{cov}(X, Y) = \frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})")
         result_col.latex(r"r = \frac{\text{cov}(X, Y)}{\sigma_X \, \sigma_Y}")
