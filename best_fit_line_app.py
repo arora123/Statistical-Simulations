@@ -115,8 +115,8 @@ with st.sidebar:
         # OLS values themselves are never shown to the user at this stage.
         ols_slope, ols_intercept = np.polyfit(x_data, y_data, 1)
         rng = np.random.default_rng()
-        cand_slope = ols_slope + rng.uniform(-2.5, 2.5)
-        cand_intercept = ols_intercept + rng.uniform(-10, 10)
+        cand_slope = ols_slope + rng.uniform(-1.5, 1.5)
+        cand_intercept = ols_intercept + rng.uniform(-3, 3)
         cost = sse_cost(x_data, y_data, cand_slope, cand_intercept)
         color = CANDIDATE_COLORS[len(st.session_state.candidates) % len(CANDIDATE_COLORS)]
         st.session_state.candidates.append({
