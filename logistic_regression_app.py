@@ -4,8 +4,8 @@ Logistic Regression Explorer: From Probability to Class Prediction
 A synthetic binary outcome (Y = 0/1) is generated from a single continuous
 predictor X. A logistic regression is fitted to the data, producing the
 classic S-shaped probability curve. Learners choose a decision cutoff
-(default 0.5) — the point on the S-curve where a predicted probability
-gets converted into a predicted class — and watch predictions, accuracy,
+(default 0.5) the point on the S-curve where a predicted probability
+gets converted into a predicted class and watch predictions, accuracy,
 and misclassification change as that line moves, without the underlying
 curve itself ever changing.
 
@@ -26,6 +26,7 @@ Run with:
 
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 import streamlit as st
 from scipy.optimize import minimize
 from io import StringIO
@@ -101,8 +102,8 @@ def make_dataset(balance_choice: str):
     x = rng.uniform(-6, 6, 150)
     if balance_choice == "Balanced (~50/50)":
         true_b0, true_b1 = 0.0, 1.2
-    else:  # Imbalanced — tuned so the positive class lands around ~10%
-        true_b0, true_b1 = -3.0, 0.4
+    else:  # Imbalanced — tuned so the positive class lands around ~10% while the curve remains visible
+        true_b0, true_b1 = -4.2, 0.9
     p_true = sigmoid(true_b0 + true_b1 * x)
     y = rng.binomial(1, p_true)
     jitter = rng.uniform(-0.045, 0.045, 150)  # fixed per-point visual jitter, stored so it doesn't reshuffle on rerun
@@ -127,7 +128,7 @@ with st.sidebar:
         st.session_state.x_data, st.session_state.y_data, st.session_state.jitter = make_dataset(balance_choice)
         st.rerun()
 
-    st.caption("👉 On the right, watch each point's predicted class and the accuracy numbers update.")
+    st.caption("👉 On the right, watch each point's predicted class based on choosen cut-off and the accuracy numbers update.")
 
     st.divider()
 
@@ -152,6 +153,14 @@ with st.sidebar:
         "Found an issue, or interested in corporate training / speaking? "
         "Reach out at [LinkedIn](https://www.linkedin.com/in/drnishaarora/) or "
         "[Email](mailto:dr.aroranisha@gmail.com?subject=Hello%20Nisha&body=I%20saw%20your%20Streamlit%20app...)"
+    )
+
+    st.divider()
+
+    st.info(
+        "🔜 **Coming next:** Classification Metrics Explorer: Accuracy, Precision, Recall & Beyond "
+        " across every possible cutoff.",
+        icon="🔜",
     )
 
 x_data = st.session_state.x_data
@@ -185,49 +194,101 @@ separator_col.markdown(
 with left_col:
     st.subheader("Let's visualize the S-shaped curve and the cutoff")
 
-    fig, ax = plt.subplots(figsize=(6, 5.5))
-
     x_line = np.linspace(x_data.min(), x_data.max(), 300)
     y_curve = sigmoid(b0_hat + b1_hat * x_line)
-    ax.plot(x_line, y_curve, color="#333333", linewidth=2, zorder=2)
-
-    # Point color shows predicted class; vertical position shows actual class.
-    groups = [
-        (pred_class == 1, TP_COLOR, "predicted 1"),
-        (pred_class == 0, FN_COLOR, "predicted 0"),
-    ]
-    for mask, color, label in groups:
-        if mask.any():
-            ax.scatter(x_data[mask], y_data[mask].astype(float) + jitter[mask],
-                       color=color, s=45, alpha=0.8, zorder=3, label=label)
-
-    ax.axhline(cutoff, color="#c97ef7", linestyle="--", linewidth=1.4, zorder=1)
-    ax.text(
-        0.99,
-        cutoff,
-        f"cutoff = {cutoff:.2f}",
-        transform=ax.get_yaxis_transform(),
-        ha="right",
-        va="bottom",
-        color="#8b4fa3",
-        fontsize=8,
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=x_line, y=y_curve, mode="lines",
+        line={"color": "#333333", "width": 2},
+        name="fitted probability", hoverinfo="skip", showlegend=False,
+    ))
+    fig.add_trace(go.Scatter(
+        x=x_data, y=y_data.astype(float) + jitter, mode="markers",
+        marker={
+            "size": 9,
+            "color": np.where(pred_class == 1, TP_COLOR, FN_COLOR),
+            "opacity": 0.85,
+            "line": {"color": "white", "width": 0.5},
+        },
+        customdata=np.column_stack((np.arange(len(x_data)), p_hat, y_data, pred_class)),
+        name="data points", showlegend=False,
+        hovertemplate=(
+            "X = %{x:.2f}<br>Predicted probability = %{customdata[1]:.3f}"
+            "<br>Actual Y = %{customdata[2]}<br>Click to inspect<extra></extra>"
+        ),
+    ))
+    selected_index = st.session_state.get("selected_logistic_point")
+    if selected_index is not None:
+        selected_x = float(x_data[selected_index])
+        selected_curve_probability = float(p_hat[selected_index])
+        selected_visual_y = float(y_data[selected_index] + jitter[selected_index])
+        fig.add_trace(go.Scatter(
+            x=[selected_x, selected_x],
+            y=[selected_visual_y, selected_curve_probability],
+            mode="lines",
+            line={"color": "#111111", "width": 1.5, "dash": "dot"},
+            name="point to curve", hoverinfo="skip", showlegend=False,
+        ))
+        fig.add_trace(go.Scatter(
+            x=[selected_x],
+            y=[selected_visual_y],
+            mode="markers",
+            marker={"size": 16, "color": "#111111", "symbol": "circle-open", "line": {"width": 2}},
+            name="selected point", hoverinfo="skip", showlegend=False,
+        ))
+        fig.add_trace(go.Scatter(
+            x=[selected_x],
+            y=[selected_curve_probability],
+            mode="markers",
+            marker={"size": 8, "color": "#333333", "symbol": "circle"},
+            name="curve probability", hoverinfo="skip", showlegend=False,
+        ))
+    fig.add_trace(go.Scatter(
+        x=[], y=[], mode="markers",
+        marker={"size": 9, "color": TP_COLOR},
+        name="predicted positive", hoverinfo="skip",
+    ))
+    fig.add_trace(go.Scatter(
+        x=[], y=[], mode="markers",
+        marker={"size": 9, "color": FN_COLOR},
+        name="predicted negative", hoverinfo="skip",
+    ))
+    fig.add_hline(
+        y=cutoff, line_dash="dash", line_color="#c97ef7",
+        annotation_text=f"cutoff = {cutoff:.2f}", annotation_position="top right",
+    )
+    fig.update_layout(
+        height=520, margin={"l": 10, "r": 10, "t": 25, "b": 10},
+        xaxis_title="X (predictor)",
+        yaxis_title="Predicted probability  P(Y = 1 | X)",
+        yaxis={"range": [-0.15, 1.15]},
+        legend={"orientation": "h", "y": 1.08, "x": 0},
+        clickmode="event+select",
+    )
+    chart_event = st.plotly_chart(
+        fig, use_container_width=True, key="logistic_point_chart",
+        on_select="rerun", selection_mode="points",
     )
 
-    ax.set_xlabel("X (predictor)")
-    ax.set_ylabel("Predicted probability  P(Y = 1 | X)")
-    ax.set_ylim(-0.15, 1.15)
-    # ax.set_title(f"Logistic fit at cutoff = {cutoff:.2f}")
-    ax.legend(
-        loc="upper left",
-        bbox_to_anchor=(1.02, 1),
-        borderaxespad=0,
-        fontsize=7.5,
-        framealpha=0.9,
-    )
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    fig.tight_layout(rect=[0, 0, 0.78, 1])
-    st.pyplot(fig)
+    if chart_event and chart_event.selection.point_indices:
+        point_index = chart_event.selection.point_indices[0]
+        st.session_state.selected_logistic_point = int(point_index)
+        st.rerun()
+
+    if selected_index is not None:
+        selected_probability = float(p_hat[selected_index])
+        selected_prediction = int(pred_class[selected_index])
+        selected_actual = int(y_data[selected_index])
+        comparison = "≥" if selected_probability >= cutoff else "<"
+        result = "correct" if selected_prediction == selected_actual else "incorrect"
+        st.info(
+            f"**For selected point:** probability(Y = 1 | X) = **{selected_probability:.3f}**. \n\n"
+            f"Because {selected_probability:.3f} {comparison} cutoff {cutoff:.2f}, "
+            f"the model classifies it as **group {selected_prediction}** "
+            f"(actual group {selected_actual}; {result})."
+        )
+    else:
+        st.caption("Click any data point to see which group it belongs to at the chosen cutoff.")
 
     st.write(
         "**Logistic regression** models the *log-odds* of the outcome as a straight line in X, "
