@@ -34,7 +34,8 @@ jobs:
               "https://enjoy-stats-best-fit-line.streamlit.app/",
               "https://enjoy-stats-equation-of-a-line-slope-intercept.streamlit.app/",
               "https://enjoy-stats-logistic-regression-app.streamlit.app/",
-              "https://enjoy-stats-classification-metric-app.streamlit.app/"
+              "https://enjoy-stats-classification-metric-app.streamlit.app/",
+              "https://enjoy-stats-knn-classification-regression.streamlit.app/"
           ]
 
           with sync_playwright() as p:
